@@ -3,21 +3,24 @@
 
 import { useState, useEffect } from 'react';
 import { useId, useBoolean } from '@fluentui/react-hooks';
-import { ComboBox,
+import {
+    ComboBox,
     IComboBox,
     IComboBoxOption,
     IComboBoxStyles,
     SelectableOptionMenuItemType,
     TooltipHost,
     ITooltipHostStyles,
-    ActionButton, 
-    DirectionalHint} from "@fluentui/react";
+    ActionButton,
+    DirectionalHint
+} from "@fluentui/react";
 import { TeachingBubble, ITeachingBubbleStyles } from '@fluentui/react/lib/TeachingBubble';
 import { Info16Regular } from '@fluentui/react-icons';
 import { ITextFieldStyleProps, ITextFieldStyles, TextField } from '@fluentui/react/lib/TextField';
 import { ILabelStyles, ILabelStyleProps } from '@fluentui/react/lib/Label';
 import { IIconProps } from '@fluentui/react';
 import { IButtonProps } from '@fluentui/react/lib/Button';
+import { useTranslation } from 'react-i18next';
 
 import { getFolders } from "../../api";
 import styles from "./FolderPicker.module.css";
@@ -31,7 +34,9 @@ interface Props {
     hide?: boolean;
 }
 
-export const FolderPicker = ({allowFolderCreation, onSelectedKeyChange, preSelectedKeys, hide}: Props) => {
+export const FolderPicker = ({ allowFolderCreation, onSelectedKeyChange, preSelectedKeys, hide }: Props) => {
+
+    const { t } = useTranslation();
 
     const buttonId = useId('targetButton');
     const tooltipId = useId('folderpicker-tooltip');
@@ -42,8 +47,8 @@ export const FolderPicker = ({allowFolderCreation, onSelectedKeyChange, preSelec
     const [options, setOptions] = useState<IComboBoxOption[]>([]);
     const selectableOptions = options.filter(
         option =>
-          (option.itemType === SelectableOptionMenuItemType.Normal || option.itemType === undefined) && !option.disabled,
-      );
+            (option.itemType === SelectableOptionMenuItemType.Normal || option.itemType === undefined) && !option.disabled,
+    );
     const comboBoxStyles: Partial<IComboBoxStyles> = { root: { maxWidth: 300 } };
     const hostStyles: Partial<ITooltipHostStyles> = { root: { display: 'inline-block' } };
     const addFolderIcon: IIconProps = { iconName: 'Add' };
@@ -59,7 +64,7 @@ export const FolderPicker = ({allowFolderCreation, onSelectedKeyChange, preSelec
             color: "#696969"
         },
     }
-    
+
     const teachingBubblePrimaryButtonClick = () => {
         const textField = document.getElementById(textFieldId) as HTMLInputElement;
         if (!textField.defaultValue || textField.defaultValue.trim() === '') {
@@ -78,7 +83,7 @@ export const FolderPicker = ({allowFolderCreation, onSelectedKeyChange, preSelec
     };
 
     const examplePrimaryButtonProps: IButtonProps = {
-        children: 'Create folder',
+        children: t('createNewFolder'),
         onClick: teachingBubblePrimaryButtonClick,
     };
 
@@ -93,8 +98,8 @@ export const FolderPicker = ({allowFolderCreation, onSelectedKeyChange, preSelec
             if (!allowNewFolders) {
                 var filteredOptions = newOptions.filter(
                     option =>
-                      (option.itemType === SelectableOptionMenuItemType.Normal || option.itemType === undefined) && !option.disabled,
-                  );
+                        (option.itemType === SelectableOptionMenuItemType.Normal || option.itemType === undefined) && !option.disabled,
+                );
                 if (preSelectedKeys !== undefined && preSelectedKeys.length > 0) {
                     setSelectedKeys(preSelectedKeys);
                     onSelectedKeyChange(preSelectedKeys);
@@ -103,7 +108,7 @@ export const FolderPicker = ({allowFolderCreation, onSelectedKeyChange, preSelec
                     setSelectedKeys(['selectAll', ...filteredOptions.map(o => o.key as string)]);
                     onSelectedKeyChange(['selectAll', ...filteredOptions.map(o => o.key as string)]);
                 }
-              } 
+            }
         } catch (error) {
             // Handle the error here
             console.log(error);
@@ -117,18 +122,18 @@ export const FolderPicker = ({allowFolderCreation, onSelectedKeyChange, preSelec
     function getStyles(props: ITextFieldStyleProps): Partial<ITextFieldStyles> {
         const { required } = props;
         return {
-          fieldGroup: [
-            { width: 300 },
-            required && {
-              borderColor: "#F8f8ff",
+            fieldGroup: [
+                { width: 300 },
+                required && {
+                    borderColor: "#F8f8ff",
+                },
+            ],
+            subComponentStyles: {
+                label: getLabelStyles,
             },
-          ],
-          subComponentStyles: {
-            label: getLabelStyles,
-          },
         };
     }
-      
+
     function getLabelStyles(props: ILabelStyleProps): ILabelStyles {
         const { required } = props;
         return {
@@ -143,76 +148,76 @@ export const FolderPicker = ({allowFolderCreation, onSelectedKeyChange, preSelec
         option?: IComboBoxOption,
         index?: number,
         value?: string,
-      ): void => {
+    ): void => {
         const selected = option?.selected;
         const currentSelectedOptionKeys = selectedKeys.filter(key => key !== 'selectAll');
         const selectAllState = currentSelectedOptionKeys.length === selectableOptions.length;
         if (!allowNewFolders) {
             if (option) {
-            if (option?.itemType === SelectableOptionMenuItemType.SelectAll) {
-                if (selectAllState) {
-                    setSelectedKeys([])
-                    onSelectedKeyChange([]);
+                if (option?.itemType === SelectableOptionMenuItemType.SelectAll) {
+                    if (selectAllState) {
+                        setSelectedKeys([])
+                        onSelectedKeyChange([]);
+                    }
+                    else {
+                        setSelectedKeys(['selectAll', ...selectableOptions.map(o => o.key as string)]);
+                        onSelectedKeyChange(['selectAll', ...selectableOptions.map(o => o.key as string)]);
+                    }
+                } else {
+                    const updatedKeys = selected
+                        ? [...currentSelectedOptionKeys, option!.key as string]
+                        : currentSelectedOptionKeys.filter(k => k !== option.key);
+                    if (updatedKeys.length === selectableOptions.length) {
+                        updatedKeys.push('selectAll');
+                    }
+                    setSelectedKeys(updatedKeys);
+                    onSelectedKeyChange(updatedKeys);
                 }
-                else {
-                    setSelectedKeys(['selectAll', ...selectableOptions.map(o => o.key as string)]);
-                    onSelectedKeyChange(['selectAll', ...selectableOptions.map(o => o.key as string)]);
-                }
-            } else {
-                const updatedKeys = selected
-                ? [...currentSelectedOptionKeys, option!.key as string]
-                : currentSelectedOptionKeys.filter(k => k !== option.key);
-                if (updatedKeys.length === selectableOptions.length) {
-                updatedKeys.push('selectAll');
-                }
-                setSelectedKeys(updatedKeys);
-                onSelectedKeyChange(updatedKeys);
-            }
             }
         }
-        else { 
+        else {
             setSelectedKeys([option!.key as string]);
             onSelectedKeyChange([option!.key as string]);
         }
-      };
+    };
 
     return (
-        <div className={hide? styles.hide : styles.folderArea}>
+        <div className={hide ? styles.hide : styles.folderArea}>
             <div className={styles.folderSelection}>
                 <ComboBox
-                    multiSelect={allowNewFolders? false : true}
+                    multiSelect={allowNewFolders ? false : true}
                     selectedKey={selectedKeys}
-                    label={allowNewFolders? "Folder Selection" : "Folder Selection (Select multiple folders)"}
+                    label={allowNewFolders ? t('folderSelection') : t('folderSelectionMultiple')}
                     options={options}
                     onChange={onChange}
                     styles={comboBoxStyles}
                 />
-                <TooltipHost content={allowNewFolders ? "Select a folder to upload documents into" : "Select a folder to filter the search by"}
-                        styles={hostStyles}
-                        id={tooltipId}>
+                <TooltipHost content={allowNewFolders ? t('selectFolderToUpload') : t('selectFolderToFilter')}
+                    styles={hostStyles}
+                    id={tooltipId}>
                     <Info16Regular></Info16Regular>
                 </TooltipHost>
             </div>
             {allowNewFolders ? (
                 <div className={styles.actionButton}>
                     <ActionButton
-                        iconProps={addFolderIcon} 
+                        iconProps={addFolderIcon}
                         allowDisabledFocus
                         onClick={toggleTeachingBubbleVisible}
                         id={buttonId}>
-                        Create new folder
+                        {t('createNewFolder')}
                     </ActionButton>
                     {teachingBubbleVisible && (
                         <TeachingBubble
-                        target={`#${buttonId}`}
-                        primaryButtonProps={examplePrimaryButtonProps}
-                        onDismiss={toggleTeachingBubbleVisible}
-                        headline="Create new folder"
-                        calloutProps={{ directionalHint: DirectionalHint.topCenter }}
-                        styles={teachingBubbleStyles}
-                        hasCloseButton={true}
+                            target={`#${buttonId}`}
+                            primaryButtonProps={examplePrimaryButtonProps}
+                            onDismiss={toggleTeachingBubbleVisible}
+                            headline={t('createNewFolder')}
+                            calloutProps={{ directionalHint: DirectionalHint.topCenter }}
+                            styles={teachingBubbleStyles}
+                            hasCloseButton={true}
                         >
-                        <TextField id={textFieldId} label='Folder Name:' required={true} styles={getStyles}/>
+                            <TextField id={textFieldId} label={t('folderName')} required={true} styles={getStyles} />
                         </TeachingBubble>
                     )}
                 </div>) : ""}

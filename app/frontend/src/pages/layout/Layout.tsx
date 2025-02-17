@@ -8,8 +8,10 @@ import styles from "./Layout.module.css";
 import { Title } from "../../components/Title/Title";
 import { getFeatureFlags, GetFeatureFlagsResponse } from "../../api";
 import { useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
 
 export const Layout = () => {
+    const { t } = useTranslation();
     const [featureFlags, setFeatureFlags] = useState<GetFeatureFlagsResponse | null>(null);
 
     async function fetchFeatureFlags() {
@@ -39,35 +41,33 @@ export const Layout = () => {
                         <ul className={styles.headerNavList}>
                             <li>
                                 <NavLink to="/" className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}>
-                                    Chat
+                                    {t('chatTitle')}
                                 </NavLink>
                             </li>
                             <li className={styles.headerNavLeftMargin}>
                                 <NavLink to="/content" className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}>
-                                    Manage Content
+                                    {t('manageContentTitle')}
                                 </NavLink>
                             </li>
                             {featureFlags?.ENABLE_MATH_ASSISTANT &&
                                 <li className={styles.headerNavLeftMargin}>
                                     <NavLink to="/tutor" className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}>
-                                    Math Assistant
-                                    <br />  
-                                    <p className={styles.centered}>(preview)</p>
+                                        {t('mathAssistantTitle')}
+                                        <br />
+                                        <p className={styles.centered}>{t('preview')}</p>
                                     </NavLink>
                                 </li>
                             }
                             {featureFlags?.ENABLE_TABULAR_DATA_ASSISTANT &&
                                 <li className={styles.headerNavLeftMargin}>
                                     <NavLink to="/tda" className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}>
-                                    Tabular Data Assistant
-                                    <br />  
-                                    <p className={styles.centered}>(preview)</p>
+                                        {t('tabularDataAssistantTitle')}
+                                        <br />
+                                        <p className={styles.centered}>{t('preview')}</p>
                                     </NavLink>
-                                    
-                                      
                                 </li>
                             }
-                    </ul>
+                        </ul>
                     </nav>
                 </div>
             </header>

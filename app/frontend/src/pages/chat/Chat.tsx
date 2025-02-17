@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 import { useRef, useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Checkbox, Panel, DefaultButton, TextField, SpinButton, Separator, Toggle, Label } from "@fluentui/react";
 import Switch from 'react-switch';
 import { GlobeFilled, BuildingMultipleFilled, AddFilled, ChatSparkleFilled } from "@fluentui/react-icons";
@@ -10,7 +11,7 @@ import { ITag } from '@fluentui/react/lib/Pickers';
 import styles from "./Chat.module.css";
 import rlbgstyles from "../../components/ResponseLengthButtonGroup/ResponseLengthButtonGroup.module.css";
 import rtbgstyles from "../../components/ResponseTempButtonGroup/ResponseTempButtonGroup.module.css";
-
+import '../../i18n'
 import { chatApi, Approaches, ChatResponse, ChatRequest, ChatTurn, ChatMode, getFeatureFlags, GetFeatureFlagsResponse } from "../../api";
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
@@ -29,6 +30,7 @@ import { TagPickerInline } from "../../components/TagPicker";
 import React from "react";
 
 const Chat = () => {
+    const { t } = useTranslation();
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [isInfoPanelOpen, setIsInfoPanelOpen] = useState(false);
     const [retrieveCount, setRetrieveCount] = useState<number>(5);
@@ -81,10 +83,10 @@ const Chat = () => {
         }
     }
 
-    const makeApiRequest = async (question: string, approach: Approaches, 
-                                work_citation_lookup: { [key: string]: { citation: string; source_path: string; page_number: string } },
-                                web_citation_lookup: { [key: string]: { citation: string; source_path: string; page_number: string } },
-                                thought_chain: { [key: string]: string}) => {
+    const makeApiRequest = async (question: string, approach: Approaches,
+        work_citation_lookup: { [key: string]: { citation: string; source_path: string; page_number: string } },
+        web_citation_lookup: { [key: string]: { citation: string; source_path: string; page_number: string } },
+        thought_chain: { [key: string]: string }) => {
         lastQuestionRef.current = question;
         lastQuestionWorkCitationRef.current = work_citation_lookup;
         lastQuestionWebCitiationRef.current = web_citation_lookup;
@@ -244,15 +246,15 @@ const Chat = () => {
         const chatMode = _ev.target.value as ChatMode || ChatMode.WorkOnly;
         setChatMode(chatMode);
         if (chatMode == ChatMode.WorkOnly)
-                setDefaultApproach(Approaches.ReadRetrieveRead);
-                setActiveApproach(Approaches.ReadRetrieveRead);
+            setDefaultApproach(Approaches.ReadRetrieveRead);
+        setActiveApproach(Approaches.ReadRetrieveRead);
         if (chatMode == ChatMode.WorkPlusWeb)
-            if (defaultApproach == Approaches.GPTDirect) 
+            if (defaultApproach == Approaches.GPTDirect)
                 setDefaultApproach(Approaches.ReadRetrieveRead)
-                setActiveApproach(Approaches.ReadRetrieveRead);
+        setActiveApproach(Approaches.ReadRetrieveRead);
         if (chatMode == ChatMode.Ungrounded)
             setDefaultApproach(Approaches.GPTDirect)
-            setActiveApproach(Approaches.GPTDirect);
+        setActiveApproach(Approaches.GPTDirect);
         clearChat();
     }
 
@@ -260,7 +262,7 @@ const Chat = () => {
         defaultApproach == Approaches.ReadRetrieveRead ? setDefaultApproach(Approaches.ChatWebRetrieveRead) : setDefaultApproach(Approaches.ReadRetrieveRead);
     }
 
-    useEffect(() => {fetchFeatureFlags()}, []);
+    useEffect(() => { fetchFeatureFlags() }, []);
     useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "smooth" }), [isLoading]);
 
     const onRetrieveCountChange = (_ev?: React.SyntheticEvent<HTMLElement, Event>, newValue?: string) => {
@@ -339,7 +341,7 @@ const Chat = () => {
     return (
         <div className={styles.container}>
             <div className={styles.subHeader}>
-                <ChatModeButtonGroup className="" defaultValue={activeChatMode} onClick={onChatModeChange} featureFlags={featureFlags} /> 
+                <ChatModeButtonGroup className="" defaultValue={activeChatMode} onClick={onChatModeChange} featureFlags={featureFlags} />
                 <div className={styles.commandsContainer}>
                     <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
                     <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
@@ -350,34 +352,34 @@ const Chat = () => {
                 <div className={styles.chatContainer}>
                     {!lastQuestionRef.current ? (
                         <div className={styles.chatEmptyState}>
-                            {activeChatMode == ChatMode.WorkOnly ? 
+                            {activeChatMode == ChatMode.WorkOnly ?
                                 <div>
-                                    <div className={styles.chatEmptyStateHeader}> 
+                                    <div className={styles.chatEmptyStateHeader}>
                                         <BuildingMultipleFilled fontSize={"100px"} primaryFill={"rgba(27, 74, 239, 1)"} aria-hidden="true" aria-label="Chat with your Work Data logo" />
+                                    </div>
+                                    <h1 className={styles.chatEmptyStateTitle}>{t('chatWithYourWorkDataTitle')}</h1>
+                                </div>
+                                : activeChatMode == ChatMode.WorkPlusWeb ?
+                                    <div>
+                                        <div className={styles.chatEmptyStateHeader}>
+                                            <BuildingMultipleFilled fontSize={"80px"} primaryFill={"rgba(27, 74, 239, 1)"} aria-hidden="true" aria-label="Chat with your Work and Web Data logo" /><AddFilled fontSize={"50px"} primaryFill={"rgba(0, 0, 0, 0.7)"} aria-hidden="true" aria-label="" /><GlobeFilled fontSize={"80px"} primaryFill={"rgba(24, 141, 69, 1)"} aria-hidden="true" aria-label="" />
                                         </div>
-                                    <h1 className={styles.chatEmptyStateTitle}>Chat with your work data</h1>
-                                </div>
-                            : activeChatMode == ChatMode.WorkPlusWeb ?
-                                <div>
-                                    <div className={styles.chatEmptyStateHeader}> 
-                                        <BuildingMultipleFilled fontSize={"80px"} primaryFill={"rgba(27, 74, 239, 1)"} aria-hidden="true" aria-label="Chat with your Work and Web Data logo" /><AddFilled fontSize={"50px"} primaryFill={"rgba(0, 0, 0, 0.7)"} aria-hidden="true" aria-label=""/><GlobeFilled fontSize={"80px"} primaryFill={"rgba(24, 141, 69, 1)"} aria-hidden="true" aria-label="" />
+                                        <h1 className={styles.chatEmptyStateTitle}>{t('chatWithYourWorkAndWebDataTitle')}</h1>
                                     </div>
-                                    <h1 className={styles.chatEmptyStateTitle}>Chat with your work and web data</h1>
-                                </div>
-                            : //else Ungrounded
-                                <div>
-                                    <div className={styles.chatEmptyStateHeader}> 
-                                        <ChatSparkleFilled fontSize={"80px"} primaryFill={"rgba(0, 0, 0, 0.35)"} aria-hidden="true" aria-label="Chat logo" />
+                                    : //else Ungrounded
+                                    <div>
+                                        <div className={styles.chatEmptyStateHeader}>
+                                            <ChatSparkleFilled fontSize={"80px"} primaryFill={"rgba(0, 0, 0, 0.35)"} aria-hidden="true" aria-label="Chat logo" />
+                                        </div>
+                                        <h1 className={styles.chatEmptyStateTitle}>{t('chatWithAnLLMTitle')}</h1>
                                     </div>
-                                    <h1 className={styles.chatEmptyStateTitle}>Chat directly with a LLM</h1>
-                                </div>
                             }
                             <span className={styles.chatEmptyObjectives}>
-                                <i>Information Assistant uses AI. Check for mistakes.   </i><a href="https://github.com/microsoft/PubSec-Info-Assistant/blob/main/docs/transparency.md" target="_blank" rel="noopener noreferrer">Transparency Note</a>
+                                <i>{t('transparencyNote')}</i><a href="https://github.com/microsoft/PubSec-Info-Assistant/blob/main/docs/transparency.md" target="_blank" rel="noopener noreferrer">{t('transparencyLink')}</a>
                             </span>
                             {activeChatMode != ChatMode.Ungrounded &&
                                 <div>
-                                    <h2 className={styles.chatEmptyStateSubtitle}>Ask anything or try an example</h2>
+                                    <h2 className={styles.chatEmptyStateSubtitle}>{t('selectExample')}</h2>
                                     <ExampleList onExampleClicked={onExampleClicked} />
                                 </div>
                             }
@@ -395,7 +397,7 @@ const Chat = () => {
                                             key={index}
                                             answer={answer[1]}
                                             answerStream={answerStream}
-                                            setError={(error) => {setError(error); removeAnswerAtIndex(index); }}
+                                            setError={(error) => { setError(error); removeAnswerAtIndex(index); }}
                                             setAnswer={(response) => updateAnswerAtIndex(index, response)}
                                             isSelected={selectedAnswer === index && activeAnalysisPanelTab !== undefined}
                                             onCitationClicked={(c, s, p) => onShowCitation(c, s, p, index)}
@@ -416,7 +418,7 @@ const Chat = () => {
                             ))}
                             {error ? (
                                 <>
-                                    <UserChatMessage message={lastQuestionRef.current} approach={activeApproach}/>
+                                    <UserChatMessage message={lastQuestionRef.current} approach={activeApproach} />
                                     <div className={styles.chatMessageGptMinWidth}>
                                         <AnswerError error={error.toString()} onRetry={() => makeApiRequest(lastQuestionRef.current, activeApproach, lastQuestionWorkCitationRef.current, lastQuestionWebCitiationRef.current, lastQuestionThoughtChainRef.current)} />
                                     </div>
@@ -425,20 +427,20 @@ const Chat = () => {
                             <div ref={chatMessageStreamEnd} />
                         </div>
                     )}
-                    
+
                     <div className={styles.chatInput}>
                         {activeChatMode == ChatMode.WorkPlusWeb && (
-                            <div className={styles.chatInputWarningMessage}> 
-                                {defaultApproach == Approaches.ReadRetrieveRead && 
+                            <div className={styles.chatInputWarningMessage}>
+                                {defaultApproach == Approaches.ReadRetrieveRead &&
                                     <div>Questions will be answered by default from Work <BuildingMultipleFilled fontSize={"20px"} primaryFill={"rgba(27, 74, 239, 1)"} aria-hidden="true" aria-label="Work Data" /></div>}
-                                {defaultApproach == Approaches.ChatWebRetrieveRead && 
+                                {defaultApproach == Approaches.ChatWebRetrieveRead &&
                                     <div>Questions will be answered by default from Web <GlobeFilled fontSize={"20px"} primaryFill={"rgba(24, 141, 69, 1)"} aria-hidden="true" aria-label="Web Data" /></div>
                                 }
-                            </div> 
+                            </div>
                         )}
                         <QuestionInput
                             clearOnSend
-                            placeholder="Type a new question (e.g. Who are Microsoft's top executives, provided as a table?)"
+                            placeholder={t('inputPlaceholderChat')}
                             disabled={isLoading}
                             onSend={question => makeApiRequest(question, defaultApproach, {}, {}, {})}
                             onAdjustClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)}
@@ -464,28 +466,28 @@ const Chat = () => {
                 )}
 
                 <Panel
-                    headerText="Configure answer generation"
+                    headerText={t('configureAnswerGeneration')}
                     isOpen={isConfigPanelOpen}
                     isBlocking={false}
                     onDismiss={() => setIsConfigPanelOpen(false)}
                     closeButtonAriaLabel="Close"
-                    onRenderFooterContent={() => <DefaultButton onClick={() => setIsConfigPanelOpen(false)}>Close</DefaultButton>}
+                    onRenderFooterContent={() => <DefaultButton onClick={() => setIsConfigPanelOpen(false)}>{t('close')}</DefaultButton>}
                     isFooterAtBottom={true}
                 >
                     {activeChatMode == ChatMode.WorkPlusWeb &&
                         <div>
-                            <Label>Use this datasource to answer Questions by default:</Label>
+                            <Label>{t('useThisDatasource')}</Label>
                             <div className={styles.defaultApproachSwitch}>
-                                <div className={styles.defaultApproachWebOption} onClick={handleToggle}>Web</div>
-                                <Switch onChange={handleToggle} checked={defaultApproach == Approaches.ReadRetrieveRead} uncheckedIcon={true} checkedIcon={true} onColor="#1B4AEF" offColor="#188d45"/>
-                                <div className={styles.defaultApproachWorkOption} onClick={handleToggle}>Work</div>
+                                <div className={styles.defaultApproachWebOption} onClick={handleToggle}>{t('web')}</div>
+                                <Switch onChange={handleToggle} checked={defaultApproach == Approaches.ReadRetrieveRead} uncheckedIcon={true} checkedIcon={true} onColor="#1B4AEF" offColor="#188d45" />
+                                <div className={styles.defaultApproachWorkOption} onClick={handleToggle}>{t('work')}</div>
                             </div>
                         </div>
                     }
                     {activeChatMode != ChatMode.Ungrounded &&
                         <SpinButton
                             className={styles.chatSettingsSeparator}
-                            label="Retrieve this many documents from search:"
+                            label={t('retrieveDocuments')}
                             min={1}
                             max={50}
                             defaultValue={retrieveCount.toString()}
@@ -496,17 +498,17 @@ const Chat = () => {
                         <Checkbox
                             className={styles.chatSettingsSeparator}
                             checked={useSuggestFollowupQuestions}
-                            label="Suggest follow-up questions"
+                            label={t('suggestFollowupQuestions')}
                             onChange={onUseSuggestFollowupQuestionsChange}
                         />
                     }
-                    <TextField className={styles.chatSettingsSeparator} defaultValue={userPersona} label="User Persona" onChange={onUserPersonaChange} />
-                    <TextField className={styles.chatSettingsSeparator} defaultValue={systemPersona} label="System Persona" onChange={onSystemPersonaChange} />
+                    <TextField className={styles.chatSettingsSeparator} defaultValue={userPersona} label={t('userPersona')} onChange={onUserPersonaChange} />
+                    <TextField className={styles.chatSettingsSeparator} defaultValue={systemPersona} label={t('systemPersona')} onChange={onSystemPersonaChange} />
                     <ResponseLengthButtonGroup className={styles.chatSettingsSeparator} onClick={onResponseLengthChange} defaultValue={responseLength} />
                     <ResponseTempButtonGroup className={styles.chatSettingsSeparator} onClick={onResponseTempChange} defaultValue={responseTemp} />
                     {activeChatMode != ChatMode.Ungrounded &&
                         <div>
-                            <Separator className={styles.chatSettingsSeparator}>Filter Search Results by</Separator>
+                            <Separator className={styles.chatSettingsSeparator}>{t('filterSearchResults')}</Separator>
                             <FolderPicker allowFolderCreation={false} onSelectedKeyChange={onSelectedKeyChanged} preSelectedKeys={selectedFolders} />
                             <TagPickerInline allowNewTags={false} onSelectedTagsChange={onSelectedTagsChange} preSelectedTags={selectedTags} />
                         </div>
@@ -519,7 +521,7 @@ const Chat = () => {
                     isBlocking={false}
                     onDismiss={() => setIsInfoPanelOpen(false)}
                     closeButtonAriaLabel="Close"
-                    onRenderFooterContent={() => <DefaultButton onClick={() => setIsInfoPanelOpen(false)}>Close</DefaultButton>}
+                    onRenderFooterContent={() => <DefaultButton onClick={() => setIsInfoPanelOpen(false)}>{t('close')}</DefaultButton>}
                     isFooterAtBottom={true}                >
                     <div className={styles.resultspanel}>
                         <InfoContent />

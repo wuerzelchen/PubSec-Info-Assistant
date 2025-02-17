@@ -8,6 +8,7 @@ import { DocumentsDetailList, IDocument } from "./DocumentsDetailList";
 import { ArrowClockwise24Filled } from "@fluentui/react-icons";
 import { animated, useSpring } from "@react-spring/web";
 import { getAllUploadStatus, FileUploadBasicStatus, GetUploadStatusRequest, FileState, getFolders, getTags } from "../../api";
+import { useTranslation } from 'react-i18next';
 
 import styles from "./FileStatus.module.css";
 
@@ -16,37 +17,38 @@ const dropdownFileStateStyles: Partial<IDropdownStyles> = { dropdown: { width: 2
 const dropdownFolderStyles: Partial<IDropdownStyles> = { dropdown: { width: 200 } };
 const dropdownTagStyles: Partial<IDropdownStyles> = { dropdown: { width: 200 } };
 
-const dropdownTimespanOptions = [
-    { key: 'Time Range', text: 'End time range', itemType: DropdownMenuItemType.Header },
-    { key: '4hours', text: '4 hours' },
-    { key: '12hours', text: '12 hours' },
-    { key: '24hours', text: '24 hours' },
-    { key: '7days', text: '7 days' },
-    { key: '30days', text: '30 days' },
-    { key: '-1days', text: 'All' },
-  ];
-
-const dropdownFileStateOptions = [
-    { key: 'FileStates', text: 'File States', itemType: DropdownMenuItemType.Header },
-    { key: FileState.All, text: 'All' },
-    { key: FileState.Complete, text: 'Complete' },
-    { key: FileState.Error, text: 'Error' },
-    { key: FileState.Processing, text: 'Processing' },
-    { key: FileState.Indexing, text: 'Indexing' },
-    { key: FileState.Queued, text: 'Queued' },
-    { key: FileState.Skipped, text: 'Skipped'},
-    { key: FileState.UPLOADED, text: 'Uploaded'},
-    { key: FileState.THROTTLED, text: 'Throttled'},    
-    { key: FileState.DELETING, text: 'Deleting'},  
-    { key: FileState.DELETED, text: 'Deleted'},  
-  ];
-
-
 interface Props {
     className?: string;
 }
 
 export const FileStatus = ({ className }: Props) => {
+    const { t } = useTranslation();
+
+    const dropdownTimespanOptions = [
+        { key: 'Time Range', text: t('endTimeRange'), itemType: DropdownMenuItemType.Header },
+        { key: '4hours', text: `4 ${t('hours')}` },
+        { key: '12hours', text: `12 ${t('hours')}` },
+        { key: '24hours', text: `24 ${t('hours')}` },
+        { key: '7days', text: `7 ${t('days')}` },
+        { key: '30days', text: `30 ${t('days')}` },
+        { key: '-1days', text: t('all') },
+    ];
+
+    const dropdownFileStateOptions = [
+        { key: 'FileStates', text: t('fileStates'), itemType: DropdownMenuItemType.Header },
+        { key: FileState.All, text: t('all') },
+        { key: FileState.Complete, text: t('complete') },
+        { key: FileState.Error, text: t('error') },
+        { key: FileState.Processing, text: t('processing') },
+        { key: FileState.Indexing, text: t('indexing') },
+        { key: FileState.Queued, text: t('queued') },
+        { key: FileState.Skipped, text: t('skipped') },
+        { key: FileState.UPLOADED, text: t('uploaded') },
+        { key: FileState.THROTTLED, text: t('throttled') },
+        { key: FileState.DELETING, text: t('deleting') },
+        { key: FileState.DELETED, text: t('deleted') },
+    ];
+
     const [selectedTimeFrameItem, setSelectedTimeFrameItem] = useState<IDropdownOption>();
     const [selectedFileStateItem, setSelectedFileStateItem] = useState<IDropdownOption>();
     const [SelectedFolderItem, setSelectedFolderItem] = useState<IDropdownOption>();
@@ -67,11 +69,11 @@ export const FileStatus = ({ className }: Props) => {
 
     const onFolderChange = (event: React.FormEvent<HTMLDivElement>, item: IDropdownOption<any> | undefined): void => {
         setSelectedFolderItem(item);
-    };    
+    };
 
     const onTagChange = (event: React.FormEvent<HTMLDivElement>, item: IDropdownOption<any> | undefined): void => {
         setSelectedTagItem(item);
-    };  
+    };
 
     const onFilesSorted = (items: IDocument[]): void => {
         setFiles(items);
@@ -147,7 +149,7 @@ export const FileStatus = ({ className }: Props) => {
     // Effect to fetch folders & tags on mount
     useEffect(() => {
         fetchFolders();
-        fetchTags();        
+        fetchTags();
     }, []);
 
     function convertStatusToItems(fileList: FileUploadBasicStatus[]) {
@@ -201,48 +203,48 @@ export const FileStatus = ({ className }: Props) => {
         <div className={styles.container}>
             <div className={`${styles.options} ${className ?? ""}`} >
                 <Dropdown
-                        label="Uploaded in last:"
-                        defaultSelectedKey='4hours'
-                        onChange={onTimeSpanChange}
-                        placeholder="Select a time range"
-                        options={dropdownTimespanOptions}
-                        styles={dropdownTimespanStyles}
-                        aria-label="timespan options for file statuses to be displayed"
-                    />
-                <Dropdown
-                        label="File State:"
-                        defaultSelectedKey={'ALL'}
-                        onChange={onFileStateChange}
-                        placeholder="Select file states"
-                        options={dropdownFileStateOptions}
-                        styles={dropdownFileStateStyles}
-                        aria-label="file state options for file statuses to be displayed"
-                    />
-                <Dropdown
-                    label="Folder:"
-                    defaultSelectedKey={'Root'}
-                    onChange={onFolderChange}
-                    placeholder="Select folder"
-                    options={folderOptions}
-                    styles={dropdownFolderStyles}
-                    aria-label="folder options for file statuses to be displayed"
+                    label={t('uploadedInLast')}
+                    defaultSelectedKey='4hours'
+                    onChange={onTimeSpanChange}
+                    placeholder={t('selectTimeRange')}
+                    options={dropdownTimespanOptions}
+                    styles={dropdownTimespanStyles}
+                    aria-label={t('timespanOptions')}
                 />
                 <Dropdown
-                    label="Tag:"
+                    label={t('fileState')}
+                    defaultSelectedKey={'ALL'}
+                    onChange={onFileStateChange}
+                    placeholder={t('selectFileState')}
+                    options={dropdownFileStateOptions}
+                    styles={dropdownFileStateStyles}
+                    aria-label={t('fileStateOptions')}
+                />
+                <Dropdown
+                    label={t('folder')}
+                    defaultSelectedKey={'Root'}
+                    onChange={onFolderChange}
+                    placeholder={t('selectFolder')}
+                    options={folderOptions}
+                    styles={dropdownFolderStyles}
+                    aria-label={t('folderOptions')}
+                />
+                <Dropdown
+                    label={t('tag')}
                     defaultSelectedKey={'All'}
                     onChange={onTagChange}
                     placeholder="Select a tag"
                     options={tagOptions}
                     styles={dropdownTagStyles}
-                    aria-label="tag options for file statuses to be displayed"
+                    aria-label={t('tagOptions')}
                 />
             </div>
             {isLoading ? (
                 <animated.div style={{ ...animatedStyles }}>
-                     <Stack className={styles.loadingContainer} verticalAlign="space-between">
+                    <Stack className={styles.loadingContainer} verticalAlign="space-between">
                         <Stack.Item grow>
                             <p className={styles.loadingText}>
-                                Getting file statuses
+                                {t('gettingFileStatuses')}
                                 <span className={styles.loadingdots} />
                             </p>
                         </Stack.Item>
@@ -250,7 +252,7 @@ export const FileStatus = ({ className }: Props) => {
                 </animated.div>
             ) : (
                 <div className={styles.resultspanel}>
-                    <DocumentsDetailList items={files == undefined ? [] : files} onFilesSorted={onFilesSorted} onRefresh={onGetStatusClick}/>
+                    <DocumentsDetailList items={files == undefined ? [] : files} onFilesSorted={onFilesSorted} onRefresh={onGetStatusClick} />
                 </div>
             )}
         </div>
