@@ -3,30 +3,34 @@
 
 import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 
-import { DetailsList, 
-    DetailsListLayoutMode, 
-    SelectionMode, 
-    IColumn, 
-    Selection, 
+import {
+    DetailsList,
+    DetailsListLayoutMode,
+    SelectionMode,
+    IColumn,
+    Selection,
     TooltipHost,
     Button,
-    Dialog, 
-    DialogType, 
-    DialogFooter, 
+    Dialog,
+    DialogType,
+    DialogFooter,
     PrimaryButton,
-    DefaultButton, 
+    DefaultButton,
     Panel,
-    PanelType} from "@fluentui/react";
+    PanelType
+} from "@fluentui/react";
 import styles from "./DocumentsDetailList.module.css";
 import { deleteItem, DeleteItemRequest, resubmitItem, ResubmitItemRequest } from "../../api";
 import { StatusContent } from "../StatusContent/StatusContent";
-import { Delete24Regular,
+import {
+    Delete24Regular,
     Send24Regular,
     ArrowClockwise24Regular,
     ImageBorderRegular,
     DocumentFolderFilled,
     ImageBorderFilled
-    } from "@fluentui/react-icons";
+} from "@fluentui/react-icons";
+import { useTranslation } from 'react-i18next';
 
 export interface IDocument {
     key: string;
@@ -53,10 +57,11 @@ export interface IDocument {
 interface Props {
     items: IDocument[];
     onFilesSorted?: (items: IDocument[]) => void;
-    onRefresh: () => void; 
+    onRefresh: () => void;
 }
 
 export const DocumentsDetailList = ({ items, onFilesSorted, onRefresh }: Props) => {
+    const { t } = useTranslation();
     const itemsRef = useRef(items);
 
     const onColumnClick = (ev: React.MouseEvent<HTMLElement>, column: IColumn): void => {
@@ -73,7 +78,7 @@ export const DocumentsDetailList = ({ items, onFilesSorted, onRefresh }: Props) 
         });
         const newItems = copyAndSort(items, currColumn.fieldName!, currColumn.isSortedDescending);
         items = newItems as IDocument[];
-        setItems(newItems); 
+        setItems(newItems);
         setColumns(newColumns);
         onFilesSorted == undefined ? console.log("onFileSorted event undefined") : onFilesSorted(items);
     };
@@ -101,7 +106,7 @@ export const DocumentsDetailList = ({ items, onFilesSorted, onRefresh }: Props) 
     }
 
     const [itemList, setItems] = useState<IDocument[]>(items);
-    
+
     // Initialize Selection with items
     useEffect(() => {
         selectionRef.current.setItems(itemList, false);
@@ -116,7 +121,7 @@ export const DocumentsDetailList = ({ items, onFilesSorted, onRefresh }: Props) 
             })));
         }
     }));
-    
+
 
     // Notification of processing
     // Define a type for the props of Notification component
@@ -129,7 +134,7 @@ export const DocumentsDetailList = ({ items, onFilesSorted, onRefresh }: Props) 
     const Notification = ({ message }: NotificationProps) => {
         // Ensure to return null when notification should not be shown
         if (!notification.show) return null;
-    
+
         return <div className={styles.notification}>{message}</div>;
     };
 
@@ -170,7 +175,7 @@ export const DocumentsDetailList = ({ items, onFilesSorted, onRefresh }: Props) 
         // Notification after deletion
         setNotification({ show: true, message: 'Processing deletion. Hit \'Refresh\' to track progress' });
     };
-    
+
 
     // Function to handle the delete button click
     const handleDeleteClick = () => {
@@ -205,7 +210,7 @@ export const DocumentsDetailList = ({ items, onFilesSorted, onRefresh }: Props) 
         // Notification after resubmission
         setNotification({ show: true, message: 'Processing resubmit. Hit \'Refresh\' to track progress' });
     };
-    
+
     // Function to handle the resubmit button click
     const handleResubmitClick = () => {
         showResubmitConfirmation();
@@ -220,7 +225,7 @@ export const DocumentsDetailList = ({ items, onFilesSorted, onRefresh }: Props) 
 
     const refreshProp = (item: any) => {
         setValue(item);
-      };
+    };
 
     const onStateColumnClick = (item: IDocument) => {
         try {
@@ -247,10 +252,10 @@ export const DocumentsDetailList = ({ items, onFilesSorted, onRefresh }: Props) 
         window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     }, []);
 
-    const [columns, setColumns] = useState<IColumn[]> ([
+    const [columns, setColumns] = useState<IColumn[]>([
         {
             key: 'file_type',
-            name: 'File Type',
+            name: t('fileType'),
             className: styles.fileIconCell,
             iconClassName: styles.fileIconHeaderIcon,
             ariaLabel: 'Column operations for File type, Press to sort on File type',
@@ -268,7 +273,7 @@ export const DocumentsDetailList = ({ items, onFilesSorted, onRefresh }: Props) 
                         <TooltipHost content={`${item.fileType} file`}>
                             <ImageBorderFilled className={styles.fileIconImg} aria-label={`${item.fileType} file icon`} fontSize="16px" />
                         </TooltipHost>
-                    );   
+                    );
                 } else if (supportedFileTypes.includes(item.fileType)) {
                     src = `https://res-1.cdn.office.net/files/fabric-cdn-prod_20221209.001/assets/item-types/16/${item.iconName}.svg`;
                     return (
@@ -280,7 +285,7 @@ export const DocumentsDetailList = ({ items, onFilesSorted, onRefresh }: Props) 
                     // The file type is not supported, return a default icon
                     return (
                         <TooltipHost content={`${item.fileType} file`}>
-                            <DocumentFolderFilled className={styles.fileIconImg} aria-label={`${item.fileType} file icon`} fontSize="16px"/>
+                            <DocumentFolderFilled className={styles.fileIconImg} aria-label={`${item.fileType} file icon`} fontSize="16px" />
                         </TooltipHost>
                     );
                 }
@@ -288,7 +293,7 @@ export const DocumentsDetailList = ({ items, onFilesSorted, onRefresh }: Props) 
         },
         {
             key: 'name',
-            name: 'Name',
+            name: t('name'),
             fieldName: 'name',
             minWidth: 210,
             maxWidth: 350,
@@ -302,7 +307,7 @@ export const DocumentsDetailList = ({ items, onFilesSorted, onRefresh }: Props) 
         },
         {
             key: 'state',
-            name: 'State',
+            name: t('state'),
             fieldName: 'state',
             minWidth: 70,
             maxWidth: 90,
@@ -316,12 +321,12 @@ export const DocumentsDetailList = ({ items, onFilesSorted, onRefresh }: Props) 
                         {item.state}
                     </span>
                 </TooltipHost>
-            ), 
+            ),
             isPadded: true,
         },
         {
             key: 'fileFolder',
-            name: 'Folder',
+            name: t('folder'),
             fieldName: 'fileFolder',
             minWidth: 70,
             maxWidth: 90,
@@ -332,7 +337,7 @@ export const DocumentsDetailList = ({ items, onFilesSorted, onRefresh }: Props) 
         },
         {
             key: 'tags',
-            name: 'Tags',
+            name: t('tags'),
             fieldName: 'tags',
             minWidth: 70,
             maxWidth: 90,
@@ -345,7 +350,7 @@ export const DocumentsDetailList = ({ items, onFilesSorted, onRefresh }: Props) 
         },
         {
             key: 'upload_timestamp',
-            name: 'Submitted On',
+            name: t('submittedOn'),
             fieldName: 'upload_timestamp',
             minWidth: 90,
             maxWidth: 120,
@@ -361,7 +366,7 @@ export const DocumentsDetailList = ({ items, onFilesSorted, onRefresh }: Props) 
         },
         {
             key: 'modified_timestamp',
-            name: 'Last Updated',
+            name: t('lastUpdated'),
             fieldName: 'modified_timestamp',
             minWidth: 90,
             maxWidth: 120,
@@ -380,7 +385,7 @@ export const DocumentsDetailList = ({ items, onFilesSorted, onRefresh }: Props) 
         },
         {
             key: 'state_description',
-            name: 'Status Detail',
+            name: t('statusDetail'),
             fieldName: 'state_description',
             minWidth: 90,
             maxWidth: 200,
@@ -402,20 +407,20 @@ export const DocumentsDetailList = ({ items, onFilesSorted, onRefresh }: Props) 
     return (
         <div>
             <div className={styles.buttonsContainer}>
-                <div className={`${styles.refresharea} ${styles.divSpacing}`} onClick={onRefresh} aria-label=" Refresh">
+                <div className={`${styles.refresharea} ${styles.divSpacing}`} onClick={onRefresh} aria-label={t('refresh')}>
                     <ArrowClockwise24Regular className={styles.refreshicon} />
-                    <span className={`${styles.refreshtext} ${styles.centeredText}`}>Refresh</span>
-                </div>        
-                <div className={`${styles.refresharea} ${styles.divSpacing}`} onClick={handleDeleteClick} aria-label=" Delete">
-                    <Delete24Regular className={styles.refreshicon} />
-                    <span className={`${styles.refreshtext} ${styles.centeredText}`}>Delete</span>
+                    <span className={`${styles.refreshtext} ${styles.centeredText}`}>{t('refresh')}</span>
                 </div>
-                <div className={`${styles.refresharea} ${styles.divSpacing}`} onClick={handleResubmitClick} aria-label=" Resubmit">
+                <div className={`${styles.refresharea} ${styles.divSpacing}`} onClick={handleDeleteClick} aria-label={t('delete')}>
+                    <Delete24Regular className={styles.refreshicon} />
+                    <span className={`${styles.refreshtext} ${styles.centeredText}`}>{t('delete')}</span>
+                </div>
+                <div className={`${styles.refresharea} ${styles.divSpacing}`} onClick={handleResubmitClick} aria-label={t('resubmit')}>
                     <Send24Regular className={styles.refreshicon} />
-                    <span className={`${styles.refreshtext} ${styles.centeredText}`}>Resubmit</span>
+                    <span className={`${styles.refreshtext} ${styles.centeredText}`}>{t('resubmit')}</span>
                 </div>
             </div>
-            <span className={styles.footer}>{"(" + items.length as string + ") records."}</span>
+            <span className={styles.footer}>{`(${items.length}) ${t('records')}`}</span>
             <DetailsList
                 items={itemList}
                 compact={true}
@@ -428,7 +433,7 @@ export const DocumentsDetailList = ({ items, onFilesSorted, onRefresh }: Props) 
                 isHeaderVisible={true}
                 onItemInvoked={onItemInvoked}
             />
-            <span className={styles.footer}>{"(" + items.length as string + ") records."}</span>
+            <span className={styles.footer}>{`(${items.length}) ${t('records')}`}</span>
             {/* <Button text="Delete" onClick={handleDeleteClick} style={{ marginRight: '10px' }} />
             <Button text="Resubmit" onClick={handleResubmitClick} /> */}
             {/* Dialog for delete confirmation */}
@@ -437,8 +442,8 @@ export const DocumentsDetailList = ({ items, onFilesSorted, onRefresh }: Props) 
                 onDismiss={() => setIsDeleteDialogVisible(false)}
                 dialogContentProps={{
                     type: DialogType.normal,
-                    title: 'Delete Confirmation',
-                    subText: 'Are you sure you want to delete the selected items?'
+                    title: t('deleteConfirmation'),
+                    subText: t('deleteConfirmationText')
                 }}
                 modalProps={{
                     isBlocking: true,
@@ -446,8 +451,8 @@ export const DocumentsDetailList = ({ items, onFilesSorted, onRefresh }: Props) 
                 }}
             >
                 <DialogFooter>
-                    <PrimaryButton onClick={handleDelete} text="Delete" />
-                    <DefaultButton onClick={() => setIsDeleteDialogVisible(false)} text="Cancel" />
+                    <PrimaryButton onClick={handleDelete} text={t('delete')} />
+                    <DefaultButton onClick={() => setIsDeleteDialogVisible(false)} text={t('cancel')} />
                 </DialogFooter>
             </Dialog>
             {/* Dialog for resubmit confirmation */}
@@ -456,8 +461,8 @@ export const DocumentsDetailList = ({ items, onFilesSorted, onRefresh }: Props) 
                 onDismiss={() => setIsResubmitDialogVisible(false)}
                 dialogContentProps={{
                     type: DialogType.normal,
-                    title: 'Resubmit Confirmation',
-                    subText: 'Are you sure you want to resubmit the selected items?'
+                    title: t('resubmitConfirmation'),
+                    subText: t('resubmitConfirmationText')
                 }}
                 modalProps={{
                     isBlocking: true,
@@ -465,27 +470,27 @@ export const DocumentsDetailList = ({ items, onFilesSorted, onRefresh }: Props) 
                 }}
             >
                 <DialogFooter>
-                    <PrimaryButton onClick={handleResubmit} text="Resubmit" />
-                    <DefaultButton onClick={() => setIsResubmitDialogVisible(false)} text="Cancel" />
+                    <PrimaryButton onClick={handleResubmit} text={t('resubmit')} />
+                    <DefaultButton onClick={() => setIsResubmitDialogVisible(false)} text={t('cancel')} />
                 </DialogFooter>
             </Dialog>
             <div>
                 <Notification message={notification.message} />
-            </div>            
-                <Panel
-                    headerText="Status Log"
-                    isOpen={stateDialogVisible}
-                    isBlocking={false}
-                    onDismiss={() => setStateDialogVisible(false)}
-                    closeButtonAriaLabel="Close"
-                    onRenderFooterContent={() => <DefaultButton onClick={() => setStateDialogVisible(false)}>Close</DefaultButton>}
-                    isFooterAtBottom={true}
-                    type={PanelType.medium}
-                >
-                    <div className={styles.resultspanel}>
+            </div>
+            <Panel
+                headerText={t('statusLog')}
+                isOpen={stateDialogVisible}
+                isBlocking={false}
+                onDismiss={() => setStateDialogVisible(false)}
+                closeButtonAriaLabel={t('close')}
+                onRenderFooterContent={() => <DefaultButton onClick={() => setStateDialogVisible(false)}>{t('close')}</DefaultButton>}
+                isFooterAtBottom={true}
+                type={PanelType.medium}
+            >
+                <div className={styles.resultspanel}>
                     <StatusContent item={value} />
-                    </div>
-                </Panel>
+                </div>
+            </Panel>
         </div>
     );
 }

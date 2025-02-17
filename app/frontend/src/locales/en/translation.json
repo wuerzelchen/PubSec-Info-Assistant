@@ -84,5 +84,22 @@
   "uploaded": "Uploaded",
   "throttled": "Throttled",
   "deleting": "Deleting",
-  "deleted": "Deleted"
+  "deleted": "Deleted",
+  "fileType": "File Type",
+  "name": "Name",
+  "state": "State",
+  "tags": "Tags",
+  "submittedOn": "Submitted On",
+  "lastUpdated": "Last Updated",
+  "statusDetail": "Status Detail",
+  "refresh": "Refresh",
+  "delete": "Delete",
+  "resubmit": "Resubmit",
+  "records": "Records",
+  "deleteConfirmation": "Delete Confirmation",
+  "deleteConfirmationText": "Are you sure you want to delete the selected items?",
+  "cancel": "Cancel",
+  "resubmitConfirmation": "Resubmit Confirmation",
+  "resubmitConfirmationText": "Are you sure you want to resubmit the selected items?",
+  "statusLog": "Status Log"
 }
