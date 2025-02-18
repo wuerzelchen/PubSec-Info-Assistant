@@ -321,7 +321,7 @@ module "enrichmentApp" {
     AZURE_SEARCH_SERVICE_ENDPOINT          = module.searchServices.endpoint
     AZURE_SEARCH_AUDIENCE                  = var.azure_search_scope
     TARGET_EMBEDDINGS_MODEL                = var.useAzureOpenAIEmbeddings ? "azure-openai_${var.azureOpenAIEmbeddingDeploymentName}" : var.sentenceTransformersModelName
-    EMBEDDING_VECTOR_SIZE                  = var.azureOpenAIEmbeddingsVectorSize ? var.azureOpenAIEmbeddingsVectorSize : var.sentenceTransformerEmbeddingVectorSize
+    EMBEDDING_VECTOR_SIZE                  = var.useAzureOpenAIEmbeddings ? var.azureOpenAIEmbeddingsVectorSize : var.sentenceTransformerEmbeddingVectorSize
     AZURE_AI_CREDENTIAL_DOMAIN             = var.azure_ai_private_link_domain
     AZURE_OPENAI_AUTHORITY_HOST            = var.azure_openai_authority_host
   }
