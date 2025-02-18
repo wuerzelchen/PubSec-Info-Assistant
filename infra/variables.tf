@@ -248,7 +248,7 @@ variable "azureOpenAIEmbeddingsModelVersion" {
   default = "2"
 }
 
-variable "azureOpenAIEmbeddingVectorSize" {
+variable "azureOpenAIEmbeddingsVectorSize" {
   type    = string
   default = "1536"
 }
