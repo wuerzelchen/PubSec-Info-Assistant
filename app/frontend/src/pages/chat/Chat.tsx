@@ -33,7 +33,7 @@ const Chat = () => {
     const { t } = useTranslation();
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [isInfoPanelOpen, setIsInfoPanelOpen] = useState(false);
-    const [retrieveCount, setRetrieveCount] = useState<number>(5);
+    const [retrieveCount, setRetrieveCount] = useState<number>(100);
     const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(false);
     const [userPersona, setUserPersona] = useState<string>("analyst");
     const [systemPersona, setSystemPersona] = useState<string>("an Assistant");
@@ -45,7 +45,7 @@ const Chat = () => {
     // Setting responseTemp to 0.6 by default, this will effect the default display of the ResponseTempButtonGroup below.
     // It must match a valid value of one of the buttons in the ResponseTempButtonGroup.tsx file.
     // If you update the default value here, you must also update the default value in the onResponseTempChange method.
-    const [responseTemp, setResponseTemp] = useState<number>(0.6);
+    const [responseTemp, setResponseTemp] = useState<number>(0);
 
     const [activeChatMode, setChatMode] = useState<ChatMode>(ChatMode.WorkOnly);
     const [defaultApproach, setDefaultApproach] = useState<number>(Approaches.ReadRetrieveRead);
@@ -489,7 +489,7 @@ const Chat = () => {
                             className={styles.chatSettingsSeparator}
                             label={t('retrieveDocuments')}
                             min={1}
-                            max={50}
+                            max={100}
                             defaultValue={retrieveCount.toString()}
                             onChange={onRetrieveCountChange}
                         />

@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 import { Example } from "./Example";
+import { useTranslation } from 'react-i18next';
 
 import styles from "./Example.module.css";
 
@@ -10,17 +11,19 @@ export type ExampleModel = {
     value: string;
 };
 
-const EXAMPLES: ExampleModel[] = [
-    { text: "Are there any radio telescopes in Australia?", value: "Are there any radio telescopes in Australia?" },
-    { text: "What are Microsoft's primary sources of revenue?", value: "What are Microsoft's primary sources of revenue?" },
-    { text: "What are some flavors of Breyers?", value: "What are some flavors of Breyers?" }
-];
-
 interface Props {
     onExampleClicked: (value: string) => void;
 }
 
 export const ExampleList = ({ onExampleClicked }: Props) => {
+    const { t } = useTranslation();
+
+    const EXAMPLES: ExampleModel[] = [
+        { text: t('examples.0'), value: t('examples.0') },
+        { text: t('examples.1'), value: t('examples.1') },
+        { text: t('examples.2'), value: t('examples.2') }
+    ];
+
     return (
         <ul className={styles.examplesNavList}>
             {EXAMPLES.map((x, i) => (

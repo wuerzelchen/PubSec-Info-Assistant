@@ -233,7 +233,7 @@ export const FileStatus = ({ className }: Props) => {
                     label={t('tag')}
                     defaultSelectedKey={'All'}
                     onChange={onTagChange}
-                    placeholder="Select a tag"
+                    placeholder={t('selectTag')}
                     options={tagOptions}
                     styles={dropdownTagStyles}
                     aria-label={t('tagOptions')}
