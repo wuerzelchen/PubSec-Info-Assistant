@@ -365,7 +365,7 @@ const Tda = ({ folderPath, tags }: Props) => {
           ) : null}
         </div>
 
-        <p>{t('selectExampleQuery')}:</p>
+        <p>{t('selectExample')}:</p>
         <div >
           <ul className={estyles.examplesNavList}>
             {EXAMPLES.map((x, i) => (
